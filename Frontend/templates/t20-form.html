@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>T20 Score Predictor</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="wrapper">
+        <h1>T20 Score Predictor</h1>
+        <form method="POST" action="{{ url_for('predict') }}">
+        <div class="user-details">
+        <div class="input-box">
+            <label for="venue">Venue</label>
+            <select id="venue" name="venue" required>
+                <option value="" selected>Select a venue</option>
+            </select>
+        </div>
+        <div class="input-box">
+            <label for="bat-team">Batting Team</label>
+            <select id="bat_team" name="bat_team" required></select>
+        </div>
+        <div class="input-box">
+            <label for="bowl-team">Bowling Team</label>
+            <select id="bowl_team" name="bowl_team" required></select>
+        </div>
+        <div class="input-box">
+            <label for="runs">Runs</label>
+            <input type="number" id="runs" name="runs" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="wickets">Wickets</label>
+            <input type="number" id="wickets" name="wickets" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="overs">Overs</label>
+            <input type="number" id="overs" name="overs" min="0" step="0.1" required>
+        </div>
+        <div class="input-box">
+            <label for="runs-last-5">Runs in Last 5 Overs</label>
+            <input type="number" id="runs-last-5" name="runs_last_5" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="wickets-last-5">Wickets in Last 5 Overs</label>
+            <input type="number" id="wickets-last-5" name="wickets_last_5" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="striker">Striker</label>
+            <input type="text" id="striker" name="striker" required>
+        </div>
+        <div class="input-box">
+            <label for="non-striker">Non-Striker</label>
+            <input type="text" id="non-striker" name="non_striker" required>
+        </div>
+        <div class="button">
+            <input type="submit" value="Predict">
+        </div>
+    </div>
+        </form>
+        
+    </div>
+  </body>
+  <script>
+      var venues_select = document.getElementById("venue");
+    venues={'The Rose Bowl': 100, 'Eden Park': 24, 'New Wanderers Stadium': 63, 'County Ground': 16, 'Brisbane Cricket Ground, Woolloongabba': 10, 'Sydney Cricket Ground': 97, 'Kennington Oval': 42, 'Kingsmead': 46, 'Newlands': 64, 'Western Australia Cricket Association Ground': 110, 'Melbourne Cricket Ground': 55, 'Old Trafford': 67, 'Brabourne Stadium': 8, 'Jade Stadium': 41, 'Gymkhana Club Ground': 32, "St George's Park": 92, 'Kensington Oval, Bridgetown': 43, 'M Chinnaswamy Stadium': 48, 'Punjab Cricket Association Stadium, Mohali': 72, 'Feroz Shah Kotla': 26, 'Wankhede Stadium': 108, 'Eden Gardens': 23, 'Sawai Mansingh Stadium': 81, 'Rajiv Gandhi International Stadium, Uppal': 76, 'MA Chidambaram Stadium, Chepauk': 49, 'Dr DY Patil Sports Academy': 20, 'National Stadium': 60, 'SuperSport Park': 96, "Queen's Park Oval, Port of Spain": 73, 'Civil Service Cricket Club, Stormont': 13, "Lord's": 47, 'Trent Bridge': 103, 'Maple Leaf North-West Ground': 53, 'Westpac Stadium': 111, 'Seddon Park': 82, 'AMI Stadium': 0, 'R Premadasa Stadium': 75, 'Buffalo Park': 11, 'De Beers Diamond Oval': 18, 'OUTsurance Oval': 65, 'Dubai International Cricket Stadium': 22, 'Warner Park, Basseterre': 109, 'Bellerive Oval': 7, 'Providence Stadium': 70, 'Beausejour Stadium, Gros Islet': 6, 'Sardar Patel Stadium, Motera': 79, 'Barabati Stadium': 4, 'Vidarbha Cricket Association Stadium, Jamtha': 106, 'Himachal Pradesh Cricket Association Stadium': 36, 'Edgbaston': 25, 'Sophia Gardens': 90, 'Sir Vivian Richards Stadium, North Sound': 89, 'Adelaide Oval': 1, 'Harare Sports Club': 33, 'Central Broward Regional Park Stadium Turf Ground': 12, 'Sheikh Zayed Stadium': 86, 'Moses Mabhida Stadium': 59, 'Nehru Stadium': 61, 'Holkar Cricket Stadium': 37, 'Pallekele International Cricket Stadium': 69, 'Stadium Australia': 94, 'Docklands Stadium': 19, 'Shere Bangla National Stadium': 87, 'Mahinda Rajapaksa International Cricket Stadium, Sooriyawewa': 51, 'Riverside Ground': 77, 'Mombasa Sports Club Ground': 58, 'ICC Global Cricket Academy': 39, 'Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium': 21, 'Subrata Roy Sahara Stadium': 95, 'Sportpark Westvliet': 91, 'Sharjah Cricket Stadium': 84, 'Wanderers Cricket Ground': 107, 'Shaheed Veer Narayan Singh International Stadium': 83, 'JSCA International Stadium Complex': 40, 'Queens Sports Club': 74, 'Arnos Vale Ground, Kingstown': 2, 'Saurashtra Cricket Association Stadium': 80, 'ICC Academy': 38, 'Zahur Ahmed Chowdhury Stadium': 113, 'Sylhet Stadium': 99, 'Sabina Park, Kingston': 78, 'Windsor Park, Roseau': 112, 'Sydney Showground Stadium': 98, 'Manuka Oval': 52, 'P Sara Oval': 68, 'Maharashtra Cricket Association Stadium': 50, 'Gaddafi Stadium': 27, 'Grange Cricket Club Ground, Raeburn Place': 29, 'The Village, Malahide': 101, 'Clontarf Cricket Club Ground': 14, 'VRA Ground': 105, 'Hazelaarweg': 34, 'Bready Cricket Club, Magheramason': 9, 'Bay Oval': 5, 'County Ground, New Road': 17, 'St Lawrence Ground': 93, 'Uxbridge Cricket Club Ground': 104, 'Headingley': 35, "Merchant Taylors' School Ground": 56, 'Kent County Cricket Ground': 44, 'Grace Road': 28, 'Arundel Castle Cricket Club Ground': 3, 'Old Deer Park': 66, 'Nevill Ground': 62, 'College Ground': 15, 'Punjab Cricket Association IS Bindra Stadium, Mohali': 71, 'Mission Road Ground, Mong Kok': 57, 'Tony Ireland Stadium': 102, 'Sheikh Abu Naser Stadium': 85, 'Khan Shaheb Osman Ali Stadium': 45, 'Green Park': 31, 'Simonds Stadium, South Geelong': 88, 'McLean Park': 54, 'Greater Noida Sports Complex Ground': 30}
+    for (var key in venues) {
+        var option = document.createElement("option");
+        option.value =venues[key] ;
+        option.text =key ;
+        venues_select.appendChild(option);
+    }
+
+    var bat_select = document.getElementById("bat_team");
+    bat={'England': 12, 'Australia': 2, 'South Africa': 54, 'Sri Lanka': 55, 'West Indies': 63, 'Kenya': 25, 'Pakistan': 42, 'India': 20, 'New Zealand': 38, 'Bangladesh': 3, 'Kolkata Knight Riders': 28, 'Chennai Super Kings': 7, 'Rajasthan Royals': 48, 'Mumbai Indians': 35, 'Deccan Chargers': 8, 'Kings XI Punjab': 26, 'Royal Challengers Bangalore': 51, 'Delhi Daredevils': 9, 'Bermuda': 4, 'Scotland': 52, 'Ireland': 21, 'Afghanistan': 1, 'Zimbabwe': 66, 'Canada': 6, 'Kochi Tuskers Kerala': 27, 'Pune Warriors': 46, 'Brisbane Heat': 5, 'Melbourne Stars': 33, 'Adelaide Strikers': 0, 'Hobart Hurricanes': 18, 'Melbourne Renegades': 32, 'Sydney Sixers': 59, 'Perth Scorchers': 44, 'Sydney Thunder': 60, 'Netherlands': 37, 'Sunrisers Hyderabad': 56, 'Nepal': 36, 'United Arab Emirates': 61, 'Hong Kong': 19, 'Papua New Guinea': 43, 'Oman': 41, 'Nottinghamshire': 40, 'Worcestershire': 64, 'Somerset': 53, 'Surrey': 57, 'Lancashire': 30, 'Middlesex': 34, 'Derbyshire': 10, 'Leicestershire': 31, 'Warwickshire': 62, 'Glamorgan': 14, 'Durham': 11, 'Sussex': 58, 'Hampshire': 17, 'Yorkshire': 65, 'Essex': 13, 'Kent': 24, 'Gloucestershire': 15, 'Northamptonshire': 39, 'Rising Pune Supergiants': 50, 'Gujarat Lions': 16, 'Quetta Gladiators': 47, 'Karachi Kings': 23, 'Islamabad United': 22, 'Lahore Qalandars': 29, 'Peshawar Zalmi': 45, 'Rising Pune Supergiant': 49}
+    for (var key in bat) {
+        var option = document.createElement("option");
+        option.value =bat[key] ;
+        option.text =key ;
+        bat_select.appendChild(option);
+    }
+
+    var bowl_select = document.getElementById("bowl_team");
+    bowl={'Australia': 2, 'New Zealand': 37, 'Pakistan': 41, 'England': 11, 'South Africa': 53, 'India': 19, 'Scotland': 51, 'Zimbabwe': 65, 'Bangladesh': 3, 'Kenya': 24, 'Sri Lanka': 54, 'West Indies': 62, 'Royal Challengers Bangalore': 50, 'Kings XI Punjab': 25, 'Delhi Daredevils': 8, 'Kolkata Knight Riders': 27, 'Rajasthan Royals': 47, 'Mumbai Indians': 34, 'Chennai Super Kings': 6, 'Deccan Chargers': 7, 'Netherlands': 36, 'Ireland': 20, 'Afghanistan': 1, 'Pune Warriors': 45, 'Kochi Tuskers Kerala': 26, 'Sydney Sixers': 58, 'Sydney Thunder': 59, 'Melbourne Renegades': 31, 'Perth Scorchers': 43, 'Brisbane Heat': 4, 'Melbourne Stars': 32, 'Adelaide Strikers': 0, 'Hobart Hurricanes': 17, 'Canada': 5, 'Sunrisers Hyderabad': 55, 'Hong Kong': 18, 'Papua New Guinea': 42, 'Nepal': 35, 'United Arab Emirates': 60, 'Oman': 40, 'Warwickshire': 61, 'Durham': 10, 'Kent': 23, 'Essex': 12, 'Derbyshire': 9, 'Glamorgan': 13, 'Hampshire': 16, 'Northamptonshire': 38, 'Yorkshire': 64, 'Worcestershire': 63, 'Nottinghamshire': 39, 'Somerset': 52, 'Gloucestershire': 14, 'Sussex': 57, 'Leicestershire': 30, 'Middlesex': 33, 'Lancashire': 29, 'Surrey': 56, 'Rising Pune Supergiants': 49, 'Gujarat Lions': 15, 'Lahore Qalandars': 28, 'Peshawar Zalmi': 44, 'Quetta Gladiators': 46, 'Islamabad United': 21, 'Karachi Kings': 22, 'Rising Pune Supergiant': 48}
+    for (var key in bowl) {
+        var option = document.createElement("option");
+        option.value =bowl[key] ;
+        option.text =key ;
+        bowl_select.appendChild(option);
+    }
+  </script>
+</html>

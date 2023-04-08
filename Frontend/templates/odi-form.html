@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ODI Score Predictor</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="wrapper">
+        <h1>ODI Score Predictor</h1>
+        <form method="POST" action="{{ url_for('predict') }}">
+        <div class="user-details">
+        <div class="input-box">
+            <label for="venue">Venue</label>
+            <select id="venue" name="venue" required>
+                <option value="" selected>Select a venue</option>
+            </select>
+        </div>
+        <div class="input-box">
+            <label for="bat-team">Batting Team</label>
+            <select id="bat_team" name="bat_team" required></select>
+        </div>
+        <div class="input-box">
+            <label for="bowl-team">Bowling Team</label>
+            <select id="bowl_team" name="bowl_team" required></select>
+        </div>
+        <div class="input-box">
+            <label for="runs">Runs</label>
+            <input type="number" id="runs" name="runs" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="wickets">Wickets</label>
+            <input type="number" id="wickets" name="wickets" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="overs">Overs</label>
+            <input type="number" id="overs" name="overs" min="0" step="0.1" required>
+        </div>
+        <div class="input-box">
+            <label for="runs-last-5">Runs in Last 5 Overs</label>
+            <input type="number" id="runs-last-5" name="runs_last_5" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="wickets-last-5">Wickets in Last 5 Overs</label>
+            <input type="number" id="wickets-last-5" name="wickets_last_5" min="0" required>
+        </div>
+        <div class="input-box">
+            <label for="striker">Striker</label>
+            <input type="text" id="striker" name="striker" required>
+        </div>
+        <div class="input-box">
+            <label for="non-striker">Non-Striker</label>
+            <input type="text" id="non-striker" name="non_striker" required>
+        </div>
+        <div class="button">
+            <input type="submit" value="Predict">
+        </div>
+    </div>
+        </form>
+        
+    </div>
+  </body>
+  <script>
+    var venues_select = document.getElementById("venue");
+    venues={'Civil Service Cricket Club, Stormont': 19, 'The Rose Bowl': 121, 'Trent Bridge': 123, 'Edgbaston': 31, "Lord's": 58, 'Kennington Oval': 53, 'Riverside Ground': 97, 'Old Trafford': 84, 'Headingley': 42, 'Brisbane Cricket Ground, Woolloongabba': 13, 'Docklands Stadium': 25, 'Sydney Cricket Ground': 120, 'Adelaide Oval': 1, 'Western Australia Cricket Association Ground': 130, 'Bellerive Oval': 9, 'Jade Stadium': 50, 'Westpac Stadium': 131, 'Rawalpindi Cricket Stadium': 95, 'Gaddafi Stadium': 33, 'Multan Cricket Stadium': 73, 'National Stadium': 77, 'Shaheed Chandu Stadium': 108, 'Chittagong Divisional Stadium': 18, 'Narayanganj Osmani Stadium': 75, 'Queenstown Events Centre': 91, 'McLean Park': 69, 'Eden Park': 30, 'Feroz Shah Kotla': 32, 'Nahar Singh Stadium': 74, 'Nehru Stadium, Fatorda': 79, 'Keenan Stadium': 52, 'Maharani Usharaje Trust Cricket Ground': 62, 'Newlands': 81, "St George's Park": 118, 'Kingsmead': 56, 'New Wanderers Stadium': 80, 'R Premadasa Stadium': 92, 'Sinhalese Sports Club Ground': 115, "Antigua Recreation Ground, St John's": 3, 'Beausejour Stadium, Gros Islet': 8, "Queen's Park Oval, Port of Spain": 89, 'Sabina Park, Kingston': 99, 'Warner Park, Basseterre': 129, 'Sheikh Zayed Stadium': 112, 'Sir Vivian Richards Stadium, North Sound': 116, 'Providence Stadium': 87, "National Cricket Stadium, St George's": 76, 'Kensington Oval, Bridgetown': 54, 'Harare Sports Club': 41, 'SuperSport Park': 119, 'Melbourne Cricket Ground': 70, 'Gymkhana Club Ground': 39, 'Punjab Cricket Association Stadium, Mohali': 88, 'Sardar Patel Stadium, Motera': 100, 'Sawai Mansingh Stadium': 102, 'Brabourne Stadium': 12, 'Seddon Park': 105, 'Goodyear Park': 35, 'Kinrara Academy Oval': 57, 'Sedgars Park': 106, 'Iqbal Stadium': 48, 'County Ground': 22, 'Willowmoore Park': 132, 'Buffalo Park': 14, 'Shere Bangla National Stadium': 114, 'Ruaraka Sports Club Ground': 98, 'Jaffery Sports Club Ground': 51, 'MA Chidambaram Stadium, Chepauk': 60, 'Indian Petrochemicals Corporation Limited Sports Complex Ground': 47, 'Madhavrao Scindia Cricket Ground': 61, 'Andhra Cricket Association-Visakhapatnam District Cricket Association Stadium': 2, 'M Chinnaswamy Stadium': 59, 'Rangiri Dambulla International Stadium': 94, 'P Saravanamuttu Stadium': 85, 'Nehru Stadium': 78, 'Rajiv Gandhi International Stadium, Uppal': 93, 'Sector 16 Stadium': 104, 'Reliance Stadium': 96, 'Vidarbha Cricket Association Ground': 126, 'Wankhede Stadium': 128, 'Green Park': 38, 'Captain Roop Singh Stadium': 16, 'Queens Sports Club': 90, 'Arnos Vale Ground, Kingstown': 4, 'Clontarf Cricket Club Ground': 20, 'Niaz Stadium, Hyderabad': 82, 'Sheikhupura Stadium': 113, 'Marrara Cricket Ground': 68, 'Senwes Park': 107, 'OUTsurance Oval': 83, 'Barabati Stadium': 5, 'AMI Stadium': 0, 'Dubai Sports City Cricket Stadium': 28, 'Windsor Park, Roseau': 133, 'Maple Leaf North-West Ground': 67, 'Vidarbha Cricket Association Stadium, Jamtha': 127, 'Zohur Ahmed Chowdhury Stadium': 135, 'University Oval': 124, 'Sophia Gardens': 117, 'Eden Gardens': 29, 'Mahinda Rajapaksa International Cricket Stadium, Sooriyawewa': 64, 'Pallekele International Cricket Stadium': 86, 'Zahur Ahmed Chowdhury Stadium': 134, 'VRA Ground': 125, 'Cambusdoon New Ground': 15, 'Dubai International Cricket Stadium': 27, 'Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium': 26, 'Boland Park': 11, 'De Beers Diamond Oval': 24, 'Cobham Oval (New)': 21, 'Sharjah Cricket Stadium': 110, 'Holkar Cricket Stadium': 44, 'Mombasa Sports Club Ground': 72, 'Saurashtra Cricket Association Stadium': 101, 'JSCA International Stadium Complex': 49, 'Himachal Pradesh Cricket Association Stadium': 43, 'The Village, Malahide': 122, 'Chevrolet Park': 17, 'Sharjah Cricket Association Stadium': 109, 'Manuka Oval': 66, 'Sheikh Abu Naser Stadium': 111, 'ICC Global Cricket Academy': 46, 'Grange Cricket Club Ground, Raeburn Place': 36, 'Maharashtra Cricket Association Stadium': 63, 'Hagley Oval': 40, 'Saxton Oval': 103, 'Khan Shaheb Osman Ali Stadium': 55, 'Bert Sutcliffe Oval': 10, 'Bay Oval': 7, 'ICC Academy': 45, 'Basin Reserve': 6, 'Mission Road Ground, Mong Kok': 71, 'Malahide': 65, 'Greater Noida Sports Complex Ground': 37, 'Darren Sammy National Cricket Stadium, Gros Islet': 23, 'Galle International Stadium': 34}
+    for (var key in venues) {
+        var option = document.createElement("option");
+        option.value =venues[key] ;
+        option.text =key ;
+        venues_select.appendChild(option);
+    }
+
+    var bat_select = document.getElementById("bat_team");
+    bat={'England': 6, 'Pakistan': 13, 'Sri Lanka': 17, 'Australia': 2, 'South Africa': 16, 'New Zealand': 12, 'Bangladesh': 3, 'West Indies': 19, 'India': 8, 'Zimbabwe': 20, 'Ireland': 9, 'Scotland': 15, 'Kenya': 10, 'Bermuda': 4, 'Netherlands': 11, 'Canada': 5, 'Asia XI': 1, 'Afghanistan': 0, 'United Arab Emirates': 18, 'Hong Kong': 7, 'Papua New Guinea': 14}
+    for (var key in bat) {
+        var option = document.createElement("option");
+        option.value =bat[key] ;
+        option.text =key ;
+        bat_select.appendChild(option);
+    }
+
+    var bowl_select = document.getElementById("bowl_team");
+    bowl={'Ireland': 9, 'Pakistan': 13, 'England': 6, 'Sri Lanka': 17, 'South Africa': 16, 'Australia': 2, 'New Zealand': 12, 'India': 8, 'West Indies': 19, 'Bangladesh': 3, 'Zimbabwe': 20, 'Scotland': 15, 'Bermuda': 4, 'Netherlands': 11, 'Canada': 5, 'Kenya': 10, 'Africa XI': 1, 'United Arab Emirates': 18, 'Hong Kong': 7, 'Afghanistan': 0, 'Papua New Guinea': 14}
+    for (var key in bowl) {
+        var option = document.createElement("option");
+        option.value =bowl[key] ;
+        option.text =key ;
+        bowl_select.appendChild(option);
+    }
+  </script>
+</html>
