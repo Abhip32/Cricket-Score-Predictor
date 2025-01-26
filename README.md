@@ -1,6 +1,3 @@
-Certainly! Here's a template for a `README.md` file for the repository, incorporating the provided information about the images and files. Feel free to adjust or expand on this as necessary.
-
----
 
 # Cricket Score Predictor
 
